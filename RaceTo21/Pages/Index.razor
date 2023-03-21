@@ -1,0 +1,211 @@
+﻿@page "/"
+@inject IMessageService _message
+<Modal Title="@("Please enter the number of players")"
+       Visible="@_visible"
+       OnOk="HandleOk"
+       OnCancel="GameOver">
+    <AntDesign.InputNumber Style="width:400px" @bind-Value="playerNum" Min="1" Max="10" PlaceHolder=""></AntDesign.InputNumber>
+</Modal>
+<div style="@_startGameVisible">
+    @foreach (var item in Players)
+    {
+        <Input Placeholder="@($"Please enter player{item.Id} name")" @bind-Value="item.Name" />
+    }
+    <div style="display:flex;">
+        <Button OnClick="StartGame">Game Start</Button>
+        <span @onclick="()=>ruleModel=!ruleModel" style="cursor: pointer">
+            <Alert Type="@AlertType.Warning" Message="Rule" ShowIcon="true" Style="padding:4px 15px;margin:0 10px;"/>
+        </span>
+    </div>
+</div>
+@*after starting the game*@
+@if (_startGameVisible == "display:none;")
+{
+    foreach (var item in Players)
+    {
+        <div style="display:flex;justify-content:space-between;height:100px;background-color:rgb(11,153,33);border-bottom:2px solid #000;">
+            <div style="display:flex;font-size:24px;font-weight:700">
+                <div>
+                    <div style="color:#fff;display:flex;align-items:center;">
+                        @if (item.Status == PlayerStatus.win)
+                        {
+                            <Icon Type="crown" Theme="twotone" TwotoneColor="#ffe58f" />
+                        }
+                        else
+                        {
+                            <Icon Type="user" Theme="outline" />
+                        }
+                        <div style="margin-right:10px;">
+                            @(
+                                $"Player{item.Id}: {item.Name}"
+                                )
+                        </div>
+                        <Icon Type="dollar" Theme="twotone" TwotoneColor="#ffe58f" />
+                        <div style="margin-right:10px;">
+                            @(
+                                $"Chips: {item.Chip}"
+                                )
+                        </div>
+                        @if (item.IsBet)
+                        {
+                            <Icon Type="check-circle" Theme="twotone" TwotoneColor="#52c41a" />
+                            <div style="margin-right:10px;">Bet</div>
+                        }
+                        else
+                        {
+                            <Icon Type="stop" Theme="twotone" TwotoneColor="#eb2f96" />
+                            <div style="margin-right:10px;">Not Bet</div>
+                        }
+                    </div>
+                    <Button OnClick="() => {item.Chip -= currentBet;chipSum += currentBet;item.IsBet = true;item.Status = PlayerStatus.active;}" Disabled="@(isBet || item.IsBet == true)">Bet</Button>
+                </div>
+                @if (item.HandCards != null)
+                {
+                    foreach (var i in item.HandCards)
+                    {
+                        var imgurl = $"images/card_{i.Suit}_{i.CardName}.png";
+                        <div style="margin-right:5px;">
+                            <img src="@imgurl" />
+                        </div>
+                    }
+                }
+            </div>
+            <div>
+                <div style="font-size:16px;font-weight:bold;margin-right:8px;text-align:center">@($"{item.Score}/21")</div>
+                @if (item.Status == PlayerStatus.active)
+                {
+                    <Tag Color="@PresetColor.Green.ToString()">active</Tag>
+                }
+                else if (item.Status == PlayerStatus.stay)
+                {
+                    <Tag Color="@PresetColor.Blue.ToString()">stay</Tag>
+                }
+                else if (item.Status == PlayerStatus.bust)
+                {
+                    <Tag Color="@PresetColor.Red.ToString()">bust</Tag>
+                }
+                else if (item.Status == PlayerStatus.win)
+                {
+                    <Tag Color="@PresetColor.Gold.ToString()">win</Tag>
+                }
+                else
+                {
+                    <Tag Color="default">leave</Tag>
+                }
+            </div>
+        </div>
+
+    }
+    <div style="background-color:rgb(11,153,33);border-bottom:2px solid #000;display:flex;">
+        <div>
+            <h3 style="color:#fff;">@($"Round: {round}")</h3>
+            <h3 style="color:#fff;">@($"Ante: {currentBet}")</h3>
+            <h3 style="color:#fff;">@($"Total Chips: {chipSum}")</h3>
+            @if (isDeal == 0)
+            {
+                <Button OnClick="InquireDeal" Disabled="@(chipSum == 0)">Start Dealing</Button>
+            }
+            else if (isDeal == 1)
+            {
+                <Button OnClick="NextDeal">Continue to deal</Button>
+            }
+            else if (isDeal == 2)
+            {
+                <Button OnClick="NextRoundClick">Start a new round</Button>
+            }
+            else if (isDeal == 3)
+            {
+                <Button OnClick="GetResult">View final game results</Button>
+            }
+            else if (isDeal == 4)
+            {
+                <Button OnClick="NewGame">Start a new Game</Button>
+            }
+        </div>
+        <div style="font-size:24px;font-weight:700;color:#fff;">
+            @tips
+        </div>
+    </div>
+}
+
+<Modal Visible="@_dealVisible"
+       OnOk="@DealOk"
+       OnCancel="@DealCancel">
+    @foreach (var item in Players)
+    {
+        //Ask if you want a card after placing a bet
+        if (item.IsBet == true)
+        {
+            if (item.Status == PlayerStatus.active || item.Status == PlayerStatus.stay)
+            {
+                <div>
+                    @($"Does Player {item.Name} Need a card?")
+                    <RadioGroup @bind-Value="item.Status">
+                        <Radio TValue="PlayerStatus" Value="PlayerStatus.active">Yes</Radio>
+                        <Radio TValue="PlayerStatus" Value="PlayerStatus.stay">No</Radio>
+                    </RadioGroup>
+                </div>
+            }
+        }
+    }
+</Modal>
+@{
+    RenderFragment cautionFooter =
+    @<Template>
+        <Button Block Type="@ButtonType.Primary" OnClick="@(()=>ruleModel= !ruleModel)">
+            <text>Got it!</text>
+        </Button>
+    </Template>;
+}
+<Modal Width="690" Visible="ruleModel" Footer="@cautionFooter" Centered Closable="false">
+    <section style="display:flex;flex-direction:column;align-items:center;">
+        <Title Level="4">Detailed rules of the game，Please read carefully</Title>
+        <div style="width:100%;display:flex;justify-content: space-around;">
+            <div style="width:300px;height:36px;background: #0c61ff;color:white;text-align:center;font-size:16px;line-height: 36px;">Overall game flow</div>
+            <div style="width:300px;height:36px;background:#ff550c;color:white;text-align:center;font-size:16px;line-height: 36px;">game win condition</div>
+        </div>
+        <div style="width:100%;height: 400px;overflow:auto;">
+            <div style="display:flex;width:100%;justify-content: space-between;color:#333;">
+                <section style="width:300px;margin-left:-16px;">
+                    <ol>
+                        <br />
+                        <li>A game is divided into three rounds，Highest score after three rounds wins.</li>
+                        <br />
+                        <li>The game starts, after entering the number of players participating in the game, you can enter the name of each player.</li>
+                        <br />
+                        <li>Enter the player name to start the game.</li>
+                        <br />
+                        <li>
+                            Players can choose to bet or not to bet, and betting can only be clicked once per round.
+                            <span style="color:#0C61FF;">But there must be one player betting in each round among all players, otherwise the game cannot start.</span>
+                            The corresponding chips will be deducted after placing the bet.
+                        </li>
+                        <br />
+                        <li>Entering the stage of starting to deal cards, players can choose whether to ask for cards according to the scores they have obtained.</li>
+                        <br />
+                        <li>The player whose score is equal to 21 points first wins the round, and more than 21 points will <span style="color:darkred;">bust</span>。</li>
+                        <br />
+                        <li>There will be more betting chips in each round, specifically adding ten each round.</li>
+                        <br />
+                        <li>2-10 corresponds to 2-10 points respectively, A corresponds to 1 point, and J, Q, K corresponds to 10 points.</li>
+                        <br />
+                        <li>All the chips on the field are the sum of each player's bets, and the winner of each round will get all the chips on the field at the same time</li>
+                    </ol>
+                </section>
+                <section style="width:300px;margin-right:20px;">
+                    <ol>
+                        <br />
+                        <li>If only one player chooses to take a card in a round, that player will win the round.</li>
+                        <br />
+                        <li>If everyone busts , the last player to bust wins the round.</li>
+                        <br />
+                        <li>The first player to reach 21 points wins the round.</li>
+                        <br />
+                        <li>At the end of three rounds, the player with the most chips will win the game</li>
+                    </ol>
+                </section>
+            </div>
+            
+        </div>
+    </section>
+</Modal>

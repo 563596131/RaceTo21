@@ -1,0 +1,90 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/lihongyi/Desktop/neu/2023Winter/Week10/6308C#/RaceTo21/RaceTo21/RaceTo21.csproj": {}
+  },
+  "projects": {
+    "/Users/lihongyi/Desktop/neu/2023Winter/Week10/6308C#/RaceTo21/RaceTo21/RaceTo21.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/lihongyi/Desktop/neu/2023Winter/Week10/6308C#/RaceTo21/RaceTo21/RaceTo21.csproj",
+        "projectName": "RaceTo21",
+        "projectPath": "/Users/lihongyi/Desktop/neu/2023Winter/Week10/6308C#/RaceTo21/RaceTo21/RaceTo21.csproj",
+        "packagesPath": "/Users/lihongyi/.nuget/packages/",
+        "outputPath": "/Users/lihongyi/Desktop/neu/2023Winter/Week10/6308C#/RaceTo21/RaceTo21/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/lihongyi/.config/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "AntDesign": {
+              "target": "Package",
+              "version": "[0.14.4, )"
+            },
+            "Microsoft.AspNetCore.Components.WebAssembly": {
+              "target": "Package",
+              "version": "[5.0.17, )"
+            },
+            "Microsoft.AspNetCore.Components.WebAssembly.DevServer": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[5.0.17, )"
+            },
+            "System.Net.Http.Json": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Runtime.browser-wasm",
+              "version": "[5.0.17, 5.0.17]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.408/RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "browser-wasm": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

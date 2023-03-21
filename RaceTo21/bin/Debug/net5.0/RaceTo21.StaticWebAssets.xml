@@ -1,0 +1,5 @@
+﻿<StaticWebAssets Version="1.0">
+  <ContentRoot BasePath="/" Path="/Users/lihongyi/Desktop/neu/2023Winter/Week10/6308C#/RaceTo21/RaceTo21/bin/Debug/net5.0/wwwroot/" />
+  <ContentRoot BasePath="/" Path="/Users/lihongyi/Desktop/neu/2023Winter/Week10/6308C#/RaceTo21/RaceTo21/obj/Debug/net5.0/scopedcss/bundle/" />
+  <ContentRoot BasePath="_content/AntDesign" Path="/Users/lihongyi/.nuget/packages/antdesign/0.14.4/build/../staticwebassets/" />
+</StaticWebAssets>
